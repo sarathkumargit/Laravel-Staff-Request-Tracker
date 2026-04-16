@@ -20,6 +20,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
       Route::get('/requests', [RequestController::class, 'index'])->name('requests.index');
     Route::post('/requests', [RequestController::class, 'store'])->name('requests.store');
+    // ADMIN ACTIONS
+    Route::patch('/requests/{id}', [RequestController::class, 'update'])->name('requests.update');
+    Route::delete('/requests/{id}', [RequestController::class, 'destroy'])->name('requests.destroy');
 
 });
 

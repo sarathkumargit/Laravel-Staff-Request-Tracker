@@ -2,27 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Request as RequestModel;
+use App\Models\Request;
 use Illuminate\Http\Request as HttpRequest;
 
 class RequestController extends Controller
 {
     public function index()
     {
-        $requests = RequestModel::latest()->get();
-
+        $requests = Request::latest()->get();
         return view('requests.index', compact('requests'));
     }
 
     public function store(HttpRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'priority' => 'required|in:low,medium,high',
-        ]);
-
-        RequestModel::create([
+        Request::create([
             'title' => $request->title,
             'description' => $request->description,
             'priority' => $request->priority,
@@ -31,4 +24,32 @@ class RequestController extends Controller
 
         return redirect()->route('requests.index');
     }
+// UPDATE STATUS
+public function update(\Illuminate\Http\Request $request, $id)
+{
+    $req = \App\Models\Request::findOrFail($id);
+
+    if (auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+
+    $req->status = $request->status;
+    $req->save();
+
+    return redirect()->back();
+}
+
+// DELETE
+public function destroy($id)
+{
+    $req = \App\Models\Request::findOrFail($id);
+
+    if (auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+
+    $req->delete();
+
+    return redirect()->back();
+}
 }
